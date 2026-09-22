@@ -85,7 +85,7 @@
             gap: 8px;
         }
         .dot {
-            width: 10px;
+            width: 100px;
             height: 10px;
             background-color: #22c55e;
             border-radius: 50%;
@@ -101,73 +101,80 @@
     </header>
 
     <div class="dashboard-grid">
-        <!-- เซ็นเซอร์ตัวที่ 1 -->
+        <!-- 1. อุณหภูมิ -->
         <div class="card">
             <i class="fa-solid fa-temperature-high"></i>
-            <h3>อุณหภูมิ (Temperature)</h3>
-            <div class="value" id="sensor1">--</div>
+            <h3>อุณหภูมิ (Temp)</h3>
+            <div class="value" id="temp">--</div>
         </div>
-        <!-- เซ็นเซอร์ตัวที่ 2 -->
+        <!-- 2. ความชื้น -->
         <div class="card">
             <i class="fa-solid fa-droplet"></i>
             <h3>ความชื้น (Humidity)</h3>
-            <div class="value" id="sensor2">--</div>
+            <div class="value" id="humi">--</div>
         </div>
-        <!-- เซ็นเซอร์ตัวที่ 3 -->
+        <!-- 3. ความเข้มแสง -->
         <div class="card">
             <i class="fa-solid fa-sun"></i>
             <h3>ความเข้มแสง (Light)</h3>
-            <div class="value" id="sensor3">--</div>
+            <div class="value" id="light">--</div>
         </div>
-        <!-- เซ็นเซอร์ตัวที่ 4 -->
+        <!-- 4. ความดัน -->
         <div class="card">
             <i class="fa-solid fa-gauge"></i>
             <h3>ความดัน (Pressure)</h3>
-            <div class="value" id="sensor4">--</div>
+            <div class="value" id="pressure">--</div>
         </div>
-        <!-- เซ็นเซอร์ตัวที่ 5 -->
+        <!-- 5. ความชื้นในดิน -->
         <div class="card">
-            <i class="fa-solid fa-bolt"></i>
-            <h3>กระแสไฟฟ้า (Current)</h3>
-            <div class="value" id="sensor5">--</div>
+            <i class="fa-solid fa-seedling"></i>
+            <h3>ความชื้นในดิน (Soil)</h3>
+            <div class="value" id="soil">--</div>
         </div>
-        <!-- เซ็นเซอร์ตัวที่ 6 -->
+        <!-- 6. ฝุ่น PM2.5 -->
         <div class="card">
-            <i class="fa-solid fa-chart-line"></i>
-            <h3>สถานะระบบ (Status)</h3>
-            <div class="value" id="sensor6" style="font-size: 1.5rem;">--</div>
+            <i class="fa-solid fa-smog"></i>
+            <h3>ฝุ่น PM2.5</h3>
+            <div class="value" id="pm25">--</div>
         </div>
     </div>
 
     <div class="status-bar">
-        <div class="dot"></div> ระบบเชื่อมต่อกับ Firebase Realtime Database แล้ว
+        <div class="dot"></div> เชื่อมต่อ Firebase สำเร็จ
     </div>
 
-    <!-- Firebase SDK (Compat Version สำหรับใช้งานง่าย) -->
+    <!-- Firebase SDK (Compat Version) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
-        // ⚙️ ตั้งค่าการเชื่อมต่อ Firebase ของคุณตรงนี้ (นำค่าจากโปรเจกต์ Firebase มาใส่)
+        // ⚙️ ตั้งค่าลิงก์ Firebase ของคุณตรงนี้
         const firebaseConfig = {
-            databaseURL: "https://YOUR_DATABASE_NAME.firebaseio.com" // <-- เปลี่ยนเป็น URL ฐานข้อมูลของคุณ
+            databaseURL: "ใส่ลิงก์ Realtime Database ของคุณตรงนี้" 
         };
 
-        // เริ่มต้นใช้งาน Firebase
         firebase.initializeApp(firebaseConfig);
-        const dbRef = firebase.database().ref(); // หรือระบุพาธเช่น dbRef = firebase.database().ref('sensors');
+        
+        // ชี้ไปที่พาธหลักของฐานข้อมูล (สมมติข้อมูลถูกเก็บไว้ภายใต้ชื่อโหนดหลัก หรือดึงจาก root โดยตรง)
+        const dbRef = firebase.database().ref(); 
 
-        // ดึงข้อมูลแบบ Real-time มาแสดงผลทั้ง 6 เซ็นเซอร์
         dbRef.on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                // ปรับชื่อตัวแปร .temp, .humidity ฯลฯ ให้ตรงกับชื่อที่ ESP32 ส่งขึ้นไปเก็บใน Firebase ของคุณ
-                document.getElementById('sensor1').innerText = data.temp !== undefined ? data.temp + " °C" : "ไม่มีข้อมูล";
-                document.getElementById('sensor2').innerText = data.humidity !== undefined ? data.humidity + " %" : "ไม่มีข้อมูล";
-                document.getElementById('sensor3').innerText = data.light !== undefined ? data.light : "ไม่มีข้อมูล";
-                document.getElementById('sensor4').innerText = data.pressure !== undefined ? data.pressure : "ไม่มีข้อมูล";
-                document.getElementById('sensor5').innerText = data.current !== undefined ? data.current : "ไม่มีข้อมูล";
-                document.getElementById('sensor6').innerText = data.status !== undefined ? data.status : "ปกติ";
+            const allData = snapshot.val();
+            if (allData) {
+                // เนื่องจากข้อมูลมีคีย์สุ่ม (เช่น -P26D...) ครอบอยู่ เราต้องดึงค่าลูกตัวแรกสุดออกมา
+                const keys = Object.keys(allData);
+                if (keys.length > 0) {
+                    const latestData = allData[keys[keys.length - 1]]; // ดึงข้อมูลชุดล่าสุด
+
+                    if (latestData) {
+                        document.getElementById('temp').innerText = latestData.temp !== undefined ? Number(latestData.temp).toFixed(2) + " °C" : "--";
+                        document.getElementById('humi').innerText = latestData.humi !== undefined ? Number(latestData.humi).toFixed(2) + " %" : "--";
+                        document.getElementById('light').innerText = latestData.light !== undefined ? Number(latestData.light).toFixed(2) : "--";
+                        document.getElementById('pressure').innerText = latestData.pressure !== undefined ? Number(latestData.pressure).toFixed(2) : "--";
+                        document.getElementById('soil').innerText = latestData.soil !== undefined ? Number(latestData.soil).toFixed(2) : "--";
+                        document.getElementById('pm25').innerText = latestData.pm25 !== undefined ? Number(latestData.pm25).toFixed(2) : "--";
+                    }
+                }
             }
         }, (error) => {
             console.error("Firebase Error: ", error);
