@@ -2,21 +2,176 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>IoT-104 Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT-104 Sensor Dashboard</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body { font-family: sans-serif; background: #f4f4f9; text-align: center; padding: 20px; }
-        .card { background: white; padding: 20px; margin: 10px auto; width: 300px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+        }
+        header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            color: #38bdf8;
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+            margin-bottom: 5px;
+        }
+        header p {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+        }
+        .card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #38bdf8;
+        }
+        .card i {
+            font-size: 2.5rem;
+            color: #38bdf8;
+            margin-bottom: 15px;
+        }
+        .card h3 {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+        .card .value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .status-bar {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #22c55e;
+        }
     </style>
 </head>
 <body>
-    <h1>IoT-104 Sensor Dashboard</h1>
-    <div class="card">
-        <h3>อุณหภูมิ (Temperature)</h3>
-        <p id="temp">กำลังโหลด...</p>
+
+    <header>
+        <h1><i class="fa-solid fa-microchip"></i> IoT-104 Dashboard</h1>
+        <p>ระบบแสดงผลข้อมูลเซ็นเซอร์แบบ Real-time จาก ESP32</p>
+    </header>
+
+    <div class="dashboard-grid">
+        <!-- เซ็นเซอร์ตัวที่ 1 -->
+        <div class="card">
+            <i class="fa-solid fa-temperature-high"></i>
+            <h3>อุณหภูมิ (Temperature)</h3>
+            <div class="value" id="sensor1">--</div>
+        </div>
+        <!-- เซ็นเซอร์ตัวที่ 2 -->
+        <div class="card">
+            <i class="fa-solid fa-droplet"></i>
+            <h3>ความชื้น (Humidity)</h3>
+            <div class="value" id="sensor2">--</div>
+        </div>
+        <!-- เซ็นเซอร์ตัวที่ 3 -->
+        <div class="card">
+            <i class="fa-solid fa-sun"></i>
+            <h3>ความเข้มแสง (Light)</h3>
+            <div class="value" id="sensor3">--</div>
+        </div>
+        <!-- เซ็นเซอร์ตัวที่ 4 -->
+        <div class="card">
+            <i class="fa-solid fa-gauge"></i>
+            <h3>ความดัน (Pressure)</h3>
+            <div class="value" id="sensor4">--</div>
+        </div>
+        <!-- เซ็นเซอร์ตัวที่ 5 -->
+        <div class="card">
+            <i class="fa-solid fa-bolt"></i>
+            <h3>กระแสไฟฟ้า (Current)</h3>
+            <div class="value" id="sensor5">--</div>
+        </div>
+        <!-- เซ็นเซอร์ตัวที่ 6 -->
+        <div class="card">
+            <i class="fa-solid fa-chart-line"></i>
+            <h3>สถานะระบบ (Status)</h3>
+            <div class="value" id="sensor6" style="font-size: 1.5rem;">--</div>
+        </div>
     </div>
-    <div class="card">
-        <h3>ความชื้น (Humidity)</h3>
-        <p id="humi">กำลังโหลด...</p>
+
+    <div class="status-bar">
+        <div class="dot"></div> ระบบเชื่อมต่อกับ Firebase Realtime Database แล้ว
     </div>
+
+    <!-- Firebase SDK (Compat Version สำหรับใช้งานง่าย) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <script>
+        // ⚙️ ตั้งค่าการเชื่อมต่อ Firebase ของคุณตรงนี้ (นำค่าจากโปรเจกต์ Firebase มาใส่)
+        const firebaseConfig = {
+            databaseURL: "https://YOUR_DATABASE_NAME.firebaseio.com" // <-- เปลี่ยนเป็น URL ฐานข้อมูลของคุณ
+        };
+
+        // เริ่มต้นใช้งาน Firebase
+        firebase.initializeApp(firebaseConfig);
+        const dbRef = firebase.database().ref(); // หรือระบุพาธเช่น dbRef = firebase.database().ref('sensors');
+
+        // ดึงข้อมูลแบบ Real-time มาแสดงผลทั้ง 6 เซ็นเซอร์
+        dbRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                // ปรับชื่อตัวแปร .temp, .humidity ฯลฯ ให้ตรงกับชื่อที่ ESP32 ส่งขึ้นไปเก็บใน Firebase ของคุณ
+                document.getElementById('sensor1').innerText = data.temp !== undefined ? data.temp + " °C" : "ไม่มีข้อมูล";
+                document.getElementById('sensor2').innerText = data.humidity !== undefined ? data.humidity + " %" : "ไม่มีข้อมูล";
+                document.getElementById('sensor3').innerText = data.light !== undefined ? data.light : "ไม่มีข้อมูล";
+                document.getElementById('sensor4').innerText = data.pressure !== undefined ? data.pressure : "ไม่มีข้อมูล";
+                document.getElementById('sensor5').innerText = data.current !== undefined ? data.current : "ไม่มีข้อมูล";
+                document.getElementById('sensor6').innerText = data.status !== undefined ? data.status : "ปกติ";
+            }
+        }, (error) => {
+            console.error("Firebase Error: ", error);
+        });
+    </script>
 </body>
 </html>
