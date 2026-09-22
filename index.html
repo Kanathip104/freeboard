@@ -85,7 +85,7 @@
             gap: 8px;
         }
         .dot {
-            width: 100px;
+            width: 10px;
             height: 10px;
             background-color: #22c55e;
             border-radius: 50%;
@@ -140,7 +140,7 @@
     </div>
 
     <div class="status-bar">
-        <div class="dot"></div> เชื่อมต่อ Firebase สำเร็จ
+        <div class="dot"></div> เชื่อมต่อ Firebase สำเร็จ (โหนด lab)
     </div>
 
     <!-- Firebase SDK (Compat Version) -->
@@ -155,16 +155,16 @@
 
         firebase.initializeApp(firebaseConfig);
         
-        // ชี้ไปที่พาธหลักของฐานข้อมูล (สมมติข้อมูลถูกเก็บไว้ภายใต้ชื่อโหนดหลัก หรือดึงจาก root โดยตรง)
-        const dbRef = firebase.database().ref(); 
+        // ชี้ตรงเข้าไปที่โหนด 'lab' ตาม Rules ของอาจารย์
+        const dbRef = firebase.database().ref('lab'); 
 
         dbRef.on('value', (snapshot) => {
             const allData = snapshot.val();
             if (allData) {
-                // เนื่องจากข้อมูลมีคีย์สุ่ม (เช่น -P26D...) ครอบอยู่ เราต้องดึงค่าลูกตัวแรกสุดออกมา
+                // ดึงข้อมูลชุดล่าสุดจากคีย์สุ่มใต้โหนด lab
                 const keys = Object.keys(allData);
                 if (keys.length > 0) {
-                    const latestData = allData[keys[keys.length - 1]]; // ดึงข้อมูลชุดล่าสุด
+                    const latestData = allData[keys[keys.length - 1]];
 
                     if (latestData) {
                         document.getElementById('temp').innerText = latestData.temp !== undefined ? Number(latestData.temp).toFixed(2) + " °C" : "--";
