@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IoT-104 Sensor Dashboard</title>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -30,45 +28,45 @@
             text-align: center;
         }
         header h1 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             color: #38bdf8;
             text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
         header p {
             color: #94a3b8;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 20px;
             width: 100%;
-            max-width: 1000px;
+            max-width: 950px;
         }
         .card {
             background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
-            padding: 25px;
+            padding: 24px;
             text-align: center;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            transition: transform 0.3s ease, border-color 0.3s ease;
+            transition: transform 0.2s ease, border-color 0.2s ease;
         }
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
             border-color: #38bdf8;
         }
         .card i {
-            font-size: 2.5rem;
+            font-size: 2.3rem;
             color: #38bdf8;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
         .card h3 {
-            font-size: 1.1rem;
+            font-size: 1rem;
             color: #cbd5e1;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 400;
         }
         .card .value {
@@ -78,7 +76,7 @@
         }
         .status-bar {
             margin-top: 30px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #94a3b8;
             display: flex;
             align-items: center;
@@ -101,37 +99,31 @@
     </header>
 
     <div class="dashboard-grid">
-        <!-- 1. อุณหภูมิ -->
         <div class="card">
             <i class="fa-solid fa-temperature-high"></i>
             <h3>อุณหภูมิ (Temp)</h3>
             <div class="value" id="temp">--</div>
         </div>
-        <!-- 2. ความชื้น -->
         <div class="card">
             <i class="fa-solid fa-droplet"></i>
             <h3>ความชื้น (Humidity)</h3>
             <div class="value" id="humi">--</div>
         </div>
-        <!-- 3. ความเข้มแสง -->
         <div class="card">
             <i class="fa-solid fa-sun"></i>
             <h3>ความเข้มแสง (Light)</h3>
             <div class="value" id="light">--</div>
         </div>
-        <!-- 4. ความดัน -->
         <div class="card">
             <i class="fa-solid fa-gauge"></i>
             <h3>ความดัน (Pressure)</h3>
             <div class="value" id="pressure">--</div>
         </div>
-        <!-- 5. ความชื้นในดิน -->
         <div class="card">
             <i class="fa-solid fa-seedling"></i>
             <h3>ความชื้นในดิน (Soil)</h3>
             <div class="value" id="soil">--</div>
         </div>
-        <!-- 6. ฝุ่น PM2.5 -->
         <div class="card">
             <i class="fa-solid fa-smog"></i>
             <h3>ฝุ่น PM2.5</h3>
@@ -140,23 +132,21 @@
     </div>
 
     <div class="status-bar">
-        <div class="dot"></div> เชื่อมต่อ Firebase สำเร็จ (esp32-01)
+        <div class="dot"></div> เชื่อมต่อ: lab/esp32-01/latest
     </div>
 
-    <!-- Firebase SDK (Compat Version) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
-        // ⚙️ ตั้งค่าลิงก์ Firebase ตามโปรเจกต์ของคุณ
         const firebaseConfig = {
             databaseURL: "https://iot-104-default-rtdb.asia-southeast1.firebasedatabase.app"
         };
 
         firebase.initializeApp(firebaseConfig);
         
-        // ชี้พาธตรงไปที่โหนด latest ที่เก็บค่าเซ็นเซอร์อยู่
-        const dbRef = firebase.database().ref('lab/esp32-01/history/latest'); 
+        // ชี้ตรงไปยัง latest ใต้ esp32-01
+        const dbRef = firebase.database().ref('lab/esp32-01/latest'); 
 
         dbRef.on('value', (snapshot) => {
             const data = snapshot.val();
