@@ -4,33 +4,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IoT-104 Sensor Dashboard</title>
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Prompt', sans-serif; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', sans-serif;
+        }
         body {
             background: linear-gradient(135deg, #0f172a, #1e293b);
-            color: #f8fafc; min-height: 100vh;
-            display: flex; flex-direction: column; align-items: center; padding: 30px 20px;
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
         }
-        header { margin-bottom: 30px; text-align: center; }
-        header h1 { font-size: 2.5rem; color: #38bdf8; text-shadow: 0 0 15px rgba(56, 189, 248, 0.4); margin-bottom: 5px; }
-        header p { color: #94a3b8; font-size: 1rem; }
+        header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        header h1 {
+            font-size: 2.5rem;
+            color: #38bdf8;
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+            margin-bottom: 5px;
+        }
+        header p {
+            color: #94a3b8;
+            font-size: 1rem;
+        }
         .dashboard-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px; width: 100%; max-width: 1000px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
         }
         .card {
-            background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px;
-            padding: 25px; text-align: center; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            transition: transform 0.3s ease, border-color 0.3s ease;
         }
-        .card i { font-size: 2.5rem; color: #38bdf8; margin-bottom: 15px; }
-        .card h3 { font-size: 1.1rem; color: #cbd5e1; margin-bottom: 10px; font-weight: 400; }
-        .card .value { font-size: 2rem; font-weight: 600; color: #ffffff; }
-        .status-bar { margin-top: 30px; font-size: 0.9rem; color: #94a3b8; display: flex; align-items: center; gap: 8px; }
-        .dot { width: 10px; height: 10px; background-color: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; }
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #38bdf8;
+        }
+        .card i {
+            font-size: 2.5rem;
+            color: #38bdf8;
+            margin-bottom: 15px;
+        }
+        .card h3 {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+        .card .value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+        .status-bar {
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #22c55e;
+        }
     </style>
 </head>
 <body>
@@ -41,52 +101,75 @@
     </header>
 
     <div class="dashboard-grid">
-        <div class="card"><i class="fa-solid fa-temperature-high"></i><h3>อุณหภูมิ (Temp)</h3><div class="value" id="temp">--</div></div>
-        <div class="card"><i class="fa-solid fa-droplet"></i><h3>ความชื้น (Humidity)</h3><div class="value" id="humi">--</div></div>
-        <div class="card"><i class="fa-solid fa-sun"></i><h3>ความเข้มแสง (Light)</h3><div class="value" id="light">--</div></div>
-        <div class="card"><i class="fa-solid fa-gauge"></i><h3>ความดัน (Pressure)</h3><div class="value" id="pressure">--</div></div>
-        <div class="card"><i class="fa-solid fa-seedling"></i><h3>ความชื้นในดิน (Soil)</h3><div class="value" id="soil">--</div></div>
-        <div class="card"><i class="fa-solid fa-smog"></i><h3>ฝุ่น PM2.5</h3><div class="value" id="pm25">--</div></div>
+        <!-- 1. อุณหภูมิ -->
+        <div class="card">
+            <i class="fa-solid fa-temperature-high"></i>
+            <h3>อุณหภูมิ (Temp)</h3>
+            <div class="value" id="temp">--</div>
+        </div>
+        <!-- 2. ความชื้น -->
+        <div class="card">
+            <i class="fa-solid fa-droplet"></i>
+            <h3>ความชื้น (Humidity)</h3>
+            <div class="value" id="humi">--</div>
+        </div>
+        <!-- 3. ความเข้มแสง -->
+        <div class="card">
+            <i class="fa-solid fa-sun"></i>
+            <h3>ความเข้มแสง (Light)</h3>
+            <div class="value" id="light">--</div>
+        </div>
+        <!-- 4. ความดัน -->
+        <div class="card">
+            <i class="fa-solid fa-gauge"></i>
+            <h3>ความดัน (Pressure)</h3>
+            <div class="value" id="pressure">--</div>
+        </div>
+        <!-- 5. ความชื้นในดิน -->
+        <div class="card">
+            <i class="fa-solid fa-seedling"></i>
+            <h3>ความชื้นในดิน (Soil)</h3>
+            <div class="value" id="soil">--</div>
+        </div>
+        <!-- 6. ฝุ่น PM2.5 -->
+        <div class="card">
+            <i class="fa-solid fa-smog"></i>
+            <h3>ฝุ่น PM2.5</h3>
+            <div class="value" id="pm25">--</div>
+        </div>
     </div>
 
     <div class="status-bar">
-        <div class="dot"></div> เชื่อมต่อ Firebase สำเร็จ (โหนด lab)
+        <div class="dot"></div> เชื่อมต่อ Firebase สำเร็จ (esp32-01)
     </div>
 
+    <!-- Firebase SDK (Compat Version) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
-        // ⚙️ ตรวจสอบให้แน่ใจว่าใส่ลิงก์ Realtime Database ตรงนี้ถูกต้องแล้ว
+        // ⚙️ ตั้งค่าลิงก์ Firebase ตามโปรเจกต์ของคุณ
         const firebaseConfig = {
-            databaseURL: "https://ชื่อโปรเจกต์ของคุณ-default-rtdb.asia-southeast1.firebasedatabase.app" 
+            databaseURL: "https://iot-104-default-rtdb.asia-southeast1.firebasedatabase.app"
         };
 
         firebase.initializeApp(firebaseConfig);
-        const dbRef = firebase.database().ref('lab'); 
+        
+        // ชี้พาธตรงไปที่โหนด latest ที่เก็บค่าเซ็นเซอร์อยู่
+        const dbRef = firebase.database().ref('lab/esp32-01/history/latest'); 
 
         dbRef.on('value', (snapshot) => {
-            const allData = snapshot.val();
-            console.log("ข้อมูลดิบที่ดึงมาจาก Firebase:", allData); // ดูค่าใน Console (F12)
-            
-            if (allData) {
-                const keys = Object.keys(allData);
-                if (keys.length > 0) {
-                    const latestData = allData[keys[keys.length - 1]];
-                    console.log("ข้อมูลชุดล่าสุด:", latestData); // ดูค่าใน Console (F12)
-
-                    if (latestData) {
-                        document.getElementById('temp').innerText = latestData.temp !== undefined ? latestData.temp + " °C" : "--";
-                        document.getElementById('humi').innerText = latestData.humi !== undefined ? latestData.humi + " %" : "--";
-                        document.getElementById('light').innerText = latestData.light !== undefined ? latestData.light : "--";
-                        document.getElementById('pressure').innerText = latestData.pressure !== undefined ? latestData.pressure : "--";
-                        document.getElementById('soil').innerText = latestData.soil !== undefined ? latestData.soil : "--";
-                        document.getElementById('pm25').innerText = latestData.pm25 !== undefined ? latestData.pm25 : "--";
-                    }
-                }
+            const data = snapshot.val();
+            if (data) {
+                document.getElementById('temp').innerText = data.temp !== undefined ? Number(data.temp).toFixed(2) + " °C" : "--";
+                document.getElementById('humi').innerText = data.humi !== undefined ? Number(data.humi).toFixed(2) + " %" : "--";
+                document.getElementById('light').innerText = data.light !== undefined ? Number(data.light).toFixed(2) : "--";
+                document.getElementById('pressure').innerText = data.pressure !== undefined ? Number(data.pressure).toFixed(2) : "--";
+                document.getElementById('soil').innerText = data.soil !== undefined ? Number(data.soil).toFixed(2) : "--";
+                document.getElementById('pm25').innerText = data.pm25 !== undefined ? Number(data.pm25).toFixed(2) : "--";
             }
         }, (error) => {
-            console.error("Firebase Error:", error);
+            console.error("Firebase Error: ", error);
         });
     </script>
 </body>
